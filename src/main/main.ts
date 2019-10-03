@@ -4,7 +4,7 @@ import { Asset } from './asset'
 import { basename } from 'path'
 import { getType } from 'mime'
 import { lstatSync, readFileSync } from 'fs'
-import { ReposCreateReleaseResponse, Response } from '@octokit/rest'
+import { ReposCreateReleaseResponse, Response, ReposGetReleaseByTagResponse } from '@octokit/rest'
 
 
 const github = new GitHub(process.env.GITHUB_TOKEN!);
@@ -41,27 +41,45 @@ async function deleteOldRelease(): Promise<void> {
   if(getInput('overwrite') != 'true'){
     return;
   }
+  const release = await github.repos.getReleaseByTag({
+    ...context.repo,
+    tag: getTag()
+  });
+  await deleteRelease(release);
+  await deleteRef();
+}
 
+// delete release
+async function deleteRelease(release:Response<ReposGetReleaseByTagResponse>){
   try{
-    const release = await github.repos.getReleaseByTag({
-      ...context.repo,
-      tag: getTag()
-    });
-    // delete release
-    await github.repos.deleteRelease({
+    github.repos.deleteRelease({
       ...context.repo,
       release_id: release.data.id
     })
-    // delete referene
+  } catch(error){
+    if( error.status == 404){
+       // ignore if the release wasnt found
+    } else {
+      throw error;
+    }
+  }
+}
+
+// delete referene
+async function deleteRef(){
+  try{
     await github.git.deleteRef({
       ...context.repo,
       ref: `tags/${getTag()}`
     });
-  } catch(error){
-    if(error.name != 'HttpError' || error.status != 404){
-      throw error;
-    }
   }
+    catch(error){
+      if( error.status == 404){
+        // ignore if the ref wasnt found
+     } else {
+       throw error;
+     }
+    }
 }
 
 function getTag(): string{
