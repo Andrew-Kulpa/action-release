@@ -1,6 +1,8 @@
 export interface Asset {
   name: string
-  mime: string,
-  size: number
+  headers : {
+    'content-type': string,
+    'content-length': number
+  }
   file: Buffer
 }
