@@ -3,14 +3,39 @@ name: 'Action Release'
 description: 'Github Action for uploading Github Releases Assets'
 author: 'yakuhzi'
 inputs:
+  # file uploading
+  files:
+    description: 'Files to upload to the release'
+    default: ''
   file:
     description: 'File to upload to the release'
-    required: true
-  changelog:
-    description: 'Path to changelog file'
-    required: false
+    default: ''
+  # release message body
+  bodyFile:
+    description: 'Path to text file for the body of the release'
+    default: ''
+  body:
+    description: 'Body of the release'
+    default: ''
+  # Tag naming and id
+  tag:
+    description: 'The tag identifier for the release'
+    default: ''
+  name:
+    description: 'The name for the release'
+    default: ''
+  # release settings
+  overwrite:
+    description: 'Delete and readd release with matching tag'
+    default: false
+  prerelease:
+    description: 'Set the release as a prerelease'
+    default: false
+  draft:
+    description: 'Set the release as a draft'
+    default: false
 env:
-  'GITHUB_TOKEN': 'Github Auth Token'
+  GITHUB_TOKEN: 'Github Auth Token'
 runs:
   using: 'node12'
   main: 'dist/main.js'

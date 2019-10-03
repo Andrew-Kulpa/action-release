@@ -1,57 +1,103 @@
-import { GitHub } from '@actions/github'
-import { setFailed } from '@actions/core/lib/core'
+import { GitHub, context } from '@actions/github'
+import { setFailed, getInput } from '@actions/core'
 import { Asset } from './asset'
 import { basename } from 'path'
 import { getType } from 'mime'
-import * as fs from 'fs'
 import { lstatSync, readFileSync } from 'fs'
-import { Release } from './release'
+import { ReposCreateReleaseResponse, Response } from '@octokit/rest'
 
-const github = new GitHub(process.env.GITHUB_TOKEN!)
-run()
+
+const github = new GitHub(process.env.GITHUB_TOKEN!);
+run();
 
 async function run(): Promise<void> {
   try {
-    if (!process.env.GITHUB_REF!.startsWith('refs/tags/')) {
-      throw new Error('A tag is required for GitHub Releases')
+    await deleteOldRelease();
+
+    const release = await createGithubRelease();
+    if(getInput('overwrite') == 'true'){
+      deleteOldRelease( );
     }
+    uploadAssets(release.data.upload_url);
 
-    let changelog: string | undefined
-    const changelogPath = process.env.INPUT_CHANGELOG
-
-    if (changelogPath) {
-      changelog = fs.readFileSync(replaceEnvVariables(changelogPath), 'utf8')
-    }
-
-    const release = await createGithubRelease(changelog)
-    const assetPath = process.env.INPUT_FILE
-
-    if (assetPath) {
-      const asset = getAsset(replaceEnvVariables(assetPath))
-      await uploadAsset(release.upload_url, asset)
-    }
-
-    console.log(`Release uploaded to ${release.html_url}`)
+    console.log(`Release uploaded to ${release.data.html_url}`);
   } catch (error) {
-    console.log(error)
-    setFailed(error.message)
+    console.log(error);
+    setFailed(error.message);
   }
 }
 
-async function createGithubRelease(changelog?: string): Promise<Release> {
-  const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/')
-  const tag = process.env.GITHUB_REF!.split('/')[2]
+function uploadAssets(upload_url: string){
+  let assets = getInput('files').split("\n");
+  assets = assets ? assets : [getInput('file')];
+  if(assets){
+    for(let asset of assets){
+      uploadAsset(upload_url,getAsset(asset));
+    }
+  }
+}
 
+async function deleteOldRelease(): Promise<void> {
+  if(getInput('overwrite') != 'true'){
+    return;
+  }
+
+  try{
+    const release = await github.repos.getReleaseByTag({
+      ...context.repo,
+      tag: getTag()
+    });
+    // delete release
+    await github.repos.deleteRelease({
+      ...context.repo,
+      release_id: release.data.id
+    })
+    // delete referene
+    await github.git.deleteRef({
+      ...context.repo,
+      ref: `tags/${getTag()}`
+    });
+  } catch(error){
+    if(error.name != 'HttpError' || error.status != 404){
+      throw error;
+    }
+  }
+}
+
+function getTag(): string{
+  let tag = '';
+  if(getInput('tag')){
+    tag = getInput('tag');
+  } else if (getInput('name')){
+    tag = getInput('name')
+  } else if (process.env.GITHUB_REF!.startsWith('refs/tags/')) {
+    tag = process.env.GITHUB_REF!.split('/')[2];
+  } else {
+    throw new Error('A tag is required for GitHub Releases, please set via the tag / name inputs or tagging the Github reference');
+  }
+  return tag;
+}
+
+function getName(): string {
+  return getInput('name') || getTag();
+}
+
+function getReleaseBody(): string {
+  const bodyFilePath = getInput('bodyFile');
+  let body = bodyFilePath ? bodyFilePath : getInput('body');
+  return body;
+}
+
+async function createGithubRelease(): Promise<Response<ReposCreateReleaseResponse>> {
   const response = await github.repos.createRelease({
-    owner,
-    repo,
-    tag_name: tag,
-    name: tag,
-    body: changelog,
-    draft: false,
-    prerelease: false,
+    ...context.repo,
+    tag_name: getName(),
+    name: getTag(),
+    body: getReleaseBody(),
+    draft: getInput('draft') == 'true',
+    prerelease: getInput('prerelease') == 'true',
   })
-  return response.data
+  return response
 }
 
 function getAsset(path: string): Asset {
@@ -63,7 +109,7 @@ function getAsset(path: string): Asset {
   }
 }
 
-async function uploadAsset(url: string, asset: Asset): Promise<any> {
+async function uploadAsset(url: string, asset: Asset): Promise<Response<any>> {
   return github.repos.uploadReleaseAsset({
     url,
     headers: {
@@ -73,10 +119,4 @@ async function uploadAsset(url: string, asset: Asset): Promise<any> {
     name: asset.name,
     file: asset.file
   })
-}
-
-function replaceEnvVariables(path: string): string {
-  return path
-    .replace(/\$GITHUB_WORKSPACE/g, process.env.GITHUB_WORKSPACE!)
-    .replace(/\$HOME/g, process.env.HOME!)
 }
