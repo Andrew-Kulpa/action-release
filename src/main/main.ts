@@ -3,7 +3,7 @@ import {setFailed, getInput} from '@actions/core';
 import {Asset} from './asset';
 import {basename} from 'path';
 import {getType} from 'mime';
-import {lstatSync, readFileSync} from 'fs';
+import {lstatSync, readFileSync, existsSync} from 'fs';
 import {
   ReposCreateReleaseResponse,
   Response,
@@ -47,8 +47,10 @@ function uploadAssets(uploadUrl: string): void {
   console.log(`Uploading assets to ${uploadUrl}:`)
   console.log(assets);
   for (const asset of assets) {
-    if(asset){
+    if(asset && existsSync(asset)){
       uploadAsset(uploadUrl, getAsset(asset));
+    } else {
+      console.log(`Asset '${asset}' skipped -- null or does not exist`)
     }
   }
 }
