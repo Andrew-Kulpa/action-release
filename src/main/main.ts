@@ -8,7 +8,7 @@ import {
   ReposCreateReleaseResponse,
   Response,
   ReposGetReleaseByTagResponse,
-  ReposUpdateReleaseAssetResponse,
+  ReposUploadReleaseAssetResponse,
 } from '@octokit/rest';
 
 
@@ -193,7 +193,7 @@ function getAsset(path: string): Asset {
  * @param {Asset} asset - the Asset object representing the release artifact
  * @return {Promise<Response<ReposUploadReleaseAssetResponse>>}
  */
-async function uploadAsset(url: string, asset: Asset): Promise<Response<ReposUpdateReleaseAssetResponse>> {
+async function uploadAsset(url: string, asset: Asset): Promise<Response<ReposUploadReleaseAssetResponse>> {
   return github.repos.uploadReleaseAsset(
       Object.assign({url}, asset)
   );
