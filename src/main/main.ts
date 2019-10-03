@@ -23,10 +23,10 @@ async function run(): Promise<void> {
   try {
     await deleteOldRelease();
 
-    const release = await createGithubRelease();
     if (getInput('overwrite') == 'true') {
       deleteOldRelease( );
     }
+    const release = await createGithubRelease();
     uploadAssets(release.data.upload_url);
 
     console.log(`Release uploaded to ${release.data.html_url}`);
@@ -44,8 +44,10 @@ async function run(): Promise<void> {
 function uploadAssets(uploadUrl: string): void {
   let assets = getInput('files').split('\n');
   assets = assets ? assets : [getInput('file')];
-  if (assets) {
-    for (const asset of assets) {
+  console.log(`Uploading assets to ${uploadUrl}:`)
+  console.log(assets);
+  for (const asset of assets) {
+    if(asset){
       uploadAsset(uploadUrl, getAsset(asset));
     }
   }
