@@ -1,7 +1,7 @@
 # https://help.github.com/en/articles/metadata-syntax-for-github-actions
-name: 'Action Release'
+name: Andrew-Kulpa/action-release
 description: 'Github Action for uploading Github Releases Assets'
-author: 'yakuhzi'
+author: Andrew Kulpa
 inputs:
   # file uploading
   files:
@@ -38,7 +38,7 @@ env:
   GITHUB_TOKEN: 'Github Auth Token'
 runs:
   using: 'node12'
-  main: 'dist/main.js'
+  main: 'lib/main/main.js'
 branding:
   color: 'green'
   icon: 'package'
