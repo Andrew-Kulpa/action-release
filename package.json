@@ -1,12 +1,11 @@
 {
-  "name": "action-release",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/main.js",
+  "name": "action-release-ext",
+  "version": "2.0.1",
+  "description": "A fork of action-release extending its github action release features",
   "scripts": {
     "build": "tsc"
   },
-  "keywords": [],
+  "keywords": ["action", "release", "github", "overwrite"],
   "author": "Andrew-Kulpa",
   "license": "MIT",
   "repository": {
