@@ -1,10 +1,14 @@
 {
     "env": {
-        "browser": false,
+        "node": true,
         "es6": true
     },
     "extends": [
-        "google"
+        "google",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:jest/recommended",
+        "plugin:jest/style"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -17,7 +21,30 @@
         "project": "./tsconfig.json"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "jest"
     ],
-    "rules": {}
+    "rules": {
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ],
+        "max-len": [
+            "error",
+            {
+                "code": 130
+            }
+        ],
+        "indent": "off",
+        "camelcase": "off",
+        "@typescript-eslint/camelcase": "off",
+        "@typescript-eslint/no-use-before-define": [
+            "error",
+            {
+                "functions": false
+            }
+        ],
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/member-delimiter-style": "off"
+    }
 }

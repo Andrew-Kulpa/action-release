@@ -199,5 +199,6 @@ jspm_packages/
 .dynamodb/
 
 dist/
+.vscode
 
 # End of https://www.gitignore.io/api/node,macos,intellij
