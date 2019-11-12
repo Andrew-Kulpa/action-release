@@ -22,7 +22,7 @@ inputs:
     description: 'Type of compression ("zip", "gz", or no compression) defaults to no compression'
     default: ''
   output:
-    description: 'The name of an output archive file'
+    description: 'The name of an output archive file, falls back to name and tag'
     default: ''
   # Tag naming and id
   tag:
