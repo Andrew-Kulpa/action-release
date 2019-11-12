@@ -23,8 +23,9 @@ An example of its usage is given below with some options commented out for clari
           concatFiles.exe
           main.exe
         # file: main.exe
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        # output: release_archive
+        # archiveType: zip
+        token: ${{secrets.GITHUB_TOKEN}}
 ```
 
 Build Process

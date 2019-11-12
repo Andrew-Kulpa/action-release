@@ -57,7 +57,7 @@ export class ActionInputs implements Inputs {
    * @return {string}
    */
   get outputName(): string {
-    return `/${this.name}${this.extension}`;
+    return `/${getInput('output') || this.name}${this.extension}`;
   }
 
   /**
