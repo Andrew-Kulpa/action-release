@@ -4,7 +4,7 @@ const mockWarning = jest.fn();
 const mockGlob = jest.fn();
 const mockReadFileSync = jest.fn();
 const mockStatSync = jest.fn();
-const mockExistsSync = jest.fn(); // used by github actions `new Context()`
+const mockExistsSync = jest.fn(x => true); // used by github actions `new Context()`
 
 import { Context } from '@actions/github/lib/context';
 import { ActionInputs, Inputs } from '../src/main/inputs';
@@ -39,9 +39,9 @@ describe('inputs', () => {
   let inputs: Inputs;
   beforeEach(() => {
     mockGetInput.mockReset();
-    mockExistsSync.mockReturnValue('{}'); // used by github actions `new Context()`
+    mockReadFileSync.mockReturnValue('{}'); // used by github actions `new Context()`
     context = new Context();
-    mockExistsSync.mockReset();
+    mockReadFileSync.mockReset();
     inputs = new ActionInputs(createGlobber(), context);
   });
 
