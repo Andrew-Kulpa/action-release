@@ -17,6 +17,13 @@ inputs:
   body:
     description: 'Body of the release'
     default: ''
+  # file compression
+  archiveType:
+    description: 'Type of compression ("zip", "gz", or no compression) defaults to no compression'
+    default: ''
+  output:
+    description: 'The name of an output archive file'
+    default: ''
   # Tag naming and id
   tag:
     description: 'The tag identifier for the release'
@@ -26,7 +33,7 @@ inputs:
     default: ''
   # release settings
   overwrite:
-    description: 'Delete and readd release with matching tag'
+    description: 'Delete and re-release with matching tag'
     default: false
   prerelease:
     description: 'Set the release as a prerelease'
@@ -34,8 +41,10 @@ inputs:
   draft:
     description: 'Set the release as a draft'
     default: false
-env:
-  GITHUB_TOKEN: 'Github Auth Token'
+  token:
+    description: 'Github Auth Token'
+    required: true
+    default: ''
 runs:
   using: 'node12'
   main: 'lib/main/main.js'
