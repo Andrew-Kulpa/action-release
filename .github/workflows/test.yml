@@ -1,4 +1,4 @@
-name:
+name: action-release Smoke Test
 
 on:
   pull_request:
@@ -14,7 +14,8 @@ on:
 jobs:
   build:
     strategy:
-      matrix: [ubuntu-latest, macOS-latest, windows-latest]
+      matrix: 
+        operating-system: [ubuntu-latest, macOS-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
