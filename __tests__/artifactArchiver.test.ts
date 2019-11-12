@@ -3,6 +3,7 @@ import { Artifact } from '../src/main/artifact';
 import fs from 'fs';
 import os from 'os';
 import rimraf from 'rimraf';
+import { promisify } from 'util';
 
 
 const TMP_PATH = `${os.tmpdir()}/action-release`;
@@ -36,6 +37,9 @@ describe('ArtifactArchiver', () => {
   });
 
   afterEach(() => {
-    rimraf.sync(`${TMP_PATH}`);
+    // https://github.com/ipfs/js-ipfs/pull/2243
+    // > rimraf.sync does not retry when it encounters errors on windows. 
+    // > The async version retries a number of times before failing.
+    return promisify(rimraf)(`${TMP_PATH}`);
   });
 });
