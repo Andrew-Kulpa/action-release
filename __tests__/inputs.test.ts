@@ -4,6 +4,7 @@ const mockWarning = jest.fn();
 const mockGlob = jest.fn();
 const mockReadFileSync = jest.fn();
 const mockStatSync = jest.fn();
+const mockExistsSync = jest.fn(x => true);
 
 import { Context } from '@actions/github/lib/context';
 import { ActionInputs, Inputs } from '../src/main/inputs';
@@ -30,6 +31,7 @@ jest.mock('@actions/core', () => ({
 jest.mock('fs', () => ({
   readFileSync: mockReadFileSync,
   statSync: mockStatSync,
+  existsSync: mockExistsSync, // used by github actions context
 }));
 
 describe('inputs', () => {
