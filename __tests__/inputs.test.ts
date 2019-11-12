@@ -4,7 +4,7 @@ const mockWarning = jest.fn();
 const mockGlob = jest.fn();
 const mockReadFileSync = jest.fn();
 const mockStatSync = jest.fn();
-const mockExistsSync = jest.fn();
+const mockExistsSync = jest.fn(); // used by github actions `new Context()`
 
 import { Context } from '@actions/github/lib/context';
 import { ActionInputs, Inputs } from '../src/main/inputs';
