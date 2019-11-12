@@ -39,7 +39,7 @@ describe('inputs', () => {
   let inputs: Inputs;
   beforeEach(() => {
     mockGetInput.mockReset();
-    mockExistsSync.mockReturnValue('{}');
+    mockExistsSync.mockReturnValue('{}'); // used by github actions `new Context()`
     context = new Context();
     mockExistsSync.mockReset();
     inputs = new ActionInputs(createGlobber(), context);
