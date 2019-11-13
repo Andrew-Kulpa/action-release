@@ -38,7 +38,7 @@ Build and Deployment Process
   $ git commit -a -m "prod dependencies"
 
   $ npm prune --production
-  $ git add node_modules
+  $ git add -f node_modules/*
   $ git add -f lib/*
   $ git commit -a -m "prod dependencies"
   $ git push origin releases/v{version_number}
