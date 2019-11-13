@@ -28,7 +28,7 @@ An example of its usage is given below with some options commented out for clari
         token: ${{secrets.GITHUB_TOKEN}}
 ```
 
-Build Process
+Build and Deployment Process
 -------------
 ```
   $ npm install
@@ -39,6 +39,11 @@ Build Process
 
   $ npm prune --production
   $ git add node_modules
+  $ git add -f lib/*
   $ git commit -a -m "prod dependencies"
   $ git push origin releases/v{version_number}
+  
+  < test by referencing the releases/v{version_number} branch >
+  < e.g. `users: andrew-kulpa/action-release@releases/v3 >
+  < create a new tag and change the @ reference accordingly >
 ```
