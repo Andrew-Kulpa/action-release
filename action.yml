@@ -47,7 +47,7 @@ inputs:
     default: ''
 runs:
   using: 'node12'
-  main: 'lib/main/main.js'
+  main: 'lib/src/main/main.js'
 branding:
   color: 'green'
   icon: 'package'
